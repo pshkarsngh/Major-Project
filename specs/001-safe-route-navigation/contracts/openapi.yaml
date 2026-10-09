@@ -1,0 +1,166 @@
+openapi: 3.0.3
+info:
+  title: SafeRoute AI API
+  version: 1.0.0
+  description: >
+    REST interface between the SafeRoute AI frontend and backend. Returns
+    safety-aware route recommendations with hazard details and explanations.
+
+paths:
+  /api/health:
+    get:
+      summary: Liveness probe
+      responses:
+        "200":
+          description: Service is up
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, example: ok }
+
+  /api/route:
+    post:
+      summary: Recommend a safety-aware route
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RouteRequest"
+      responses:
+        "200":
+          description: Ranked routes with the recommended route and explanation
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/RouteResponse"
+        "400":
+          description: Missing/invalid origin or destination, or unresolvable location
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+        "502":
+          description: Upstream routing service unavailable
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+  /api/hazards:
+    get:
+      summary: Retrieve stored hazard detections for a logged query
+      parameters:
+        - name: queryId
+          in: query
+          required: true
+          schema: { type: integer }
+      responses:
+        "200":
+          description: Cached hazard detections for the query
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Hazard"
+        "404":
+          description: Query not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+
+components:
+  schemas:
+    RouteRequest:
+      type: object
+      required: [origin, destination]
+      properties:
+        origin: { type: string, example: "Alva's Institute of Engineering and Technology, Moodbidri" }
+        destination: { type: string, example: "Mangalore Central" }
+        preference:
+          type: string
+          nullable: true
+          description: Optional natural-language safety preference
+          example: "avoid potholes, I'm not in a hurry"
+
+    RouteResponse:
+      type: object
+      required: [queryId, recommendedRouteId, routes]
+      properties:
+        queryId: { type: integer }
+        recommendedRouteId: { type: string }
+        preference:
+          $ref: "#/components/schemas/InterpretedPreference"
+        explanation:
+          $ref: "#/components/schemas/Explanation"
+        routes:
+          type: array
+          items:
+            $ref: "#/components/schemas/Route"
+
+    Route:
+      type: object
+      required: [id, distanceM, durationS, safetyScore, rank, recommended, hazards, assessedSegments, totalSegments, imageryCoverage, assessed]
+      properties:
+        id: { type: string, example: "r1" }
+        distanceM: { type: integer, example: 9600 }
+        durationS: { type: integer, example: 1080 }
+        safetyScore: { type: number, format: float, minimum: 0, maximum: 100, example: 93.8 }
+        rank: { type: number, format: float, example: 88.6 }
+        recommended: { type: boolean }
+        polyline: { type: string, description: Encoded route geometry }
+        assessedSegments: { type: integer, description: Segments with usable (non-stale) imagery, example: 28 }
+        totalSegments: { type: integer, description: All segments in the route, example: 32 }
+        imageryCoverage:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          description: assessedSegments / totalSegments
+          example: 0.875
+        assessed: { type: boolean, description: False when no segment could be assessed; such a route is never recommended over an assessed route }
+        hazards:
+          type: array
+          items:
+            $ref: "#/components/schemas/Hazard"
+
+    Hazard:
+      type: object
+      required: [class, confidence, severity, lat, lng]
+      properties:
+        class:
+          type: string
+          enum: [pothole, crack, damaged_patch, waterlogging, uneven_surface]
+        confidence: { type: number, format: float, minimum: 0, maximum: 1 }
+        severity:
+          type: string
+          enum: [low, medium, high]
+        lat: { type: number, format: double }
+        lng: { type: number, format: double }
+
+    InterpretedPreference:
+      type: object
+      properties:
+        alpha: { type: number, format: float, minimum: 0, maximum: 1, example: 0.7 }
+        avoidClasses:
+          type: array
+          items: { type: string }
+        interpreted: { type: boolean, description: False when the balanced default was applied }
+
+    Explanation:
+      type: object
+      required: [text, generated]
+      properties:
+        text: { type: string, example: "This route takes 6 minutes longer but is safer with a score of 91 vs 68." }
+        generated: { type: boolean }
+
+    Error:
+      type: object
+      required: [error]
+      properties:
+        error: { type: string }
+        detail: { type: string, nullable: true }
