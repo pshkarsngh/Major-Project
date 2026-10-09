@@ -1,0 +1,31 @@
+# SafeRoute AI - local ignores
+__pycache__/
+*.py[cod]
+.venv/
+venv/
+env/
+*.egg-info/
+.pytest_cache/
+dist/
+build/
+
+# Secrets & data
+.env
+*.db
+*.sqlite3
+ml/weights/*.pt
+backend/data/images/*.jpg
+backend/data/images/*.png
+
+# Frontend build
+frontend/node_modules/
+frontend/dist/
+
+# OS / editors
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# OpenCode agent config (local only)
+.opencode/
