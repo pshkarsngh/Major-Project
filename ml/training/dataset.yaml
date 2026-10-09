@@ -1,0 +1,15 @@
+# YOLOv8 dataset config for SafeRoute AI.
+# Point `path` at the prepared dataset root; images/labels live under train/val/test.
+# Base data: RDD2020 (https://github.com/sekilab/RoadDamageDetector) plus extra
+# images labeled for the `waterlogging` and `uneven_surface` classes.
+path: ../datasets/saferoute
+train: images/train
+val: images/val
+test: images/test
+
+names:
+  0: pothole
+  1: crack
+  2: damaged_patch
+  3: waterlogging
+  4: uneven_surface
