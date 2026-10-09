@@ -1,0 +1,8 @@
+Flask>=3.0
+requests>=2.31
+pyyaml>=6.0
+# Heavy / optional at runtime (lazy-imported). Install for real hazard detection:
+# opencv-python>=4.9
+# ultralytics>=8.1
+# Dev:
+pytest>=8.0
