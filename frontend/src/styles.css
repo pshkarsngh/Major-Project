@@ -1,0 +1,102 @@
+:root {
+  --bg: #0f1720;
+  --panel: #1a2530;
+  --accent: #29c47f;
+  --text: #e8eef4;
+  --muted: #93a4b3;
+}
+
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+}
+
+header { padding: 24px 32px 8px; }
+header h1 { margin: 0; }
+header p { margin: 4px 0 0; color: var(--muted); }
+
+main {
+  display: grid;
+  grid-template-columns: minmax(300px, 420px) 1fr;
+  gap: 16px;
+  padding: 16px 32px 32px;
+  align-items: start;
+}
+
+.panel {
+  background: var(--panel);
+  border-radius: 12px;
+  padding: 20px;
+  margin-bottom: 16px;
+}
+
+label { display: block; margin-bottom: 12px; font-size: 0.9rem; color: var(--muted); }
+
+input {
+  display: block;
+  width: 100%;
+  margin-top: 4px;
+  padding: 10px 12px;
+  border-radius: 8px;
+  border: 1px solid #2f3d4a;
+  background: #0d151c;
+  color: var(--text);
+}
+
+button {
+  width: 100%;
+  padding: 12px;
+  border: 0;
+  border-radius: 8px;
+  background: var(--accent);
+  color: #06231a;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.status { min-height: 1.2em; color: var(--muted); font-size: 0.9rem; }
+
+.explanation {
+  border-left: 3px solid var(--accent);
+  padding: 8px 12px;
+  margin-bottom: 16px;
+  background: #16212b;
+  border-radius: 6px;
+}
+
+.route {
+  border: 1px solid #2f3d4a;
+  border-radius: 8px;
+  padding: 12px;
+  margin-bottom: 10px;
+}
+
+.route.recommended { border-color: var(--accent); }
+.route .score { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
+.route .meta { color: var(--muted); font-size: 0.85rem; }
+.route .hazards { font-size: 0.85rem; margin-top: 6px; }
+
+.badge {
+  display: inline-block;
+  font-size: 0.7rem;
+  font-weight: 600;
+  padding: 2px 8px;
+  border-radius: 999px;
+  background: #2f3d4a;
+  color: var(--text);
+  vertical-align: middle;
+}
+
+.badge.warn { background: #7a4a12; color: #ffd9a8; }
+
+.map { min-height: 520px; background: #16212b; border-radius: 12px; }
+.map-hint { color: var(--muted); padding: 16px; margin: 0; }
+
+@media (max-width: 860px) {
+  main { grid-template-columns: 1fr; }
+  .map { min-height: 360px; }
+}
