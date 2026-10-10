@@ -30,28 +30,26 @@ export default function App() {
   }
 
   return (
-    <div>
-      <header>
-        <h1>SafeRoute AI</h1>
-        <p>Safety-aware navigation - avoid potholes, cracks, waterlogging and rough roads.</p>
-      </header>
-      <main>
-        <section className="panel">
+    <div className="app">
+      <MapView routes={routes} apiKey={window.SAFEROUTE_MAPS_KEY} />
+      <aside className="sidebar">
+        <div className="brand">
+          <h1>SafeRoute AI</h1>
+          <p>Avoid potholes, cracks, waterlogging and rough roads.</p>
+        </div>
+        <div className="sidebar-body">
           <RouteForm onSubmit={handleSubmit} />
           <p className="status" role="status">
             {status}
           </p>
-        </section>
-        <section className="panel">
           {explanation && <div className="explanation">{explanation}</div>}
           <div className="routes">
             {routes.map((route) => (
               <RouteCard key={route.id} route={route} />
             ))}
           </div>
-        </section>
-        <MapView routes={routes} apiKey={window.SAFEROUTE_MAPS_KEY} />
-      </main>
+        </div>
+      </aside>
     </div>
   );
 }

@@ -4,81 +4,115 @@
   --accent: #29c47f;
   --text: #e8eef4;
   --muted: #93a4b3;
+  --line: #2f3d4a;
 }
 
 * { box-sizing: border-box; }
+html, body, #root { height: 100%; }
 
 body {
   margin: 0;
   font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
   background: var(--bg);
   color: var(--text);
+  overflow: hidden;
 }
 
-header { padding: 24px 32px 8px; }
-header h1 { margin: 0; }
-header p { margin: 4px 0 0; color: var(--muted); }
+.app { position: fixed; inset: 0; }
 
-main {
-  display: grid;
-  grid-template-columns: minmax(300px, 420px) 1fr;
-  gap: 16px;
-  padding: 16px 32px 32px;
-  align-items: start;
+/* Full-bleed map canvas; the sidebar floats on top of it. */
+.map { position: absolute; inset: 0; background: #16212b; }
+.map-hint {
+  position: absolute;
+  top: 50%;
+  left: 55%;
+  transform: translate(-50%, -50%);
+  max-width: 280px;
+  text-align: center;
+  color: var(--muted);
+  margin: 0;
 }
 
-.panel {
+.sidebar {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  bottom: 16px;
+  z-index: 10;
+  width: min(400px, calc(100vw - 32px));
+  display: flex;
+  flex-direction: column;
   background: var(--panel);
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 16px;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.45);
+  overflow: hidden;
 }
 
-label { display: block; margin-bottom: 12px; font-size: 0.9rem; color: var(--muted); }
+.brand { padding: 18px 20px; border-bottom: 1px solid var(--line); }
+.brand h1 { margin: 0; font-size: 1.15rem; }
+.brand p { margin: 4px 0 0; color: var(--muted); font-size: 0.8rem; }
+
+.sidebar-body { padding: 16px 20px 20px; overflow-y: auto; }
+
+label {
+  display: block;
+  margin-bottom: 12px;
+  font-size: 0.72rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
 
 input {
   display: block;
   width: 100%;
-  margin-top: 4px;
-  padding: 10px 12px;
-  border-radius: 8px;
-  border: 1px solid #2f3d4a;
+  margin-top: 6px;
+  padding: 11px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--line);
   background: #0d151c;
   color: var(--text);
+  font-size: 0.95rem;
 }
+input:focus { outline: none; border-color: var(--accent); }
 
 button {
   width: 100%;
   padding: 12px;
   border: 0;
-  border-radius: 8px;
+  border-radius: 10px;
   background: var(--accent);
   color: #06231a;
   font-weight: 600;
+  font-size: 0.95rem;
   cursor: pointer;
 }
+button:hover { filter: brightness(1.06); }
 
-.status { min-height: 1.2em; color: var(--muted); font-size: 0.9rem; }
+.status { min-height: 1.2em; color: var(--muted); font-size: 0.85rem; margin: 12px 0 0; }
 
 .explanation {
   border-left: 3px solid var(--accent);
-  padding: 8px 12px;
-  margin-bottom: 16px;
+  padding: 10px 12px;
+  margin: 12px 0 0;
   background: #16212b;
   border-radius: 6px;
+  font-size: 0.9rem;
+  line-height: 1.45;
 }
+
+.routes { margin-top: 16px; display: flex; flex-direction: column; gap: 10px; }
 
 .route {
-  border: 1px solid #2f3d4a;
-  border-radius: 8px;
-  padding: 12px;
-  margin-bottom: 10px;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 14px;
+  background: #131d26;
 }
-
-.route.recommended { border-color: var(--accent); }
-.route .score { font-size: 1.4rem; font-weight: 700; color: var(--accent); }
-.route .meta { color: var(--muted); font-size: 0.85rem; }
-.route .hazards { font-size: 0.85rem; margin-top: 6px; }
+.route.recommended { border-color: var(--accent); background: #14241d; }
+.route .score { font-size: 1.5rem; font-weight: 700; color: var(--accent); }
+.route .meta { color: var(--muted); font-size: 0.85rem; margin-top: 2px; }
+.route .hazards { font-size: 0.85rem; margin-top: 8px; }
 
 .badge {
   display: inline-block;
@@ -93,10 +127,15 @@ button {
 
 .badge.warn { background: #7a4a12; color: #ffd9a8; }
 
-.map { min-height: 520px; background: #16212b; border-radius: 12px; }
-.map-hint { color: var(--muted); padding: 16px; margin: 0; }
-
-@media (max-width: 860px) {
-  main { grid-template-columns: 1fr; }
-  .map { min-height: 360px; }
+/* Mobile: the sidebar becomes a bottom sheet over the map. */
+@media (max-width: 700px) {
+  .sidebar {
+    top: auto;
+    left: 8px;
+    right: 8px;
+    bottom: 8px;
+    width: auto;
+    max-height: 62vh;
+  }
+  .map-hint { left: 50%; }
 }

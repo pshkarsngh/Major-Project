@@ -54,6 +54,10 @@ export default function MapView({ routes, apiKey }) {
           overlaysRef.current.push(line);
 
           if (route.recommended) {
+            [["A", path[0]], ["B", path[path.length - 1]]].forEach(([label, position]) => {
+              const pin = new maps.Marker({ position, label, map });
+              overlaysRef.current.push(pin);
+            });
             (route.hazards || []).forEach((hazard) => {
               const marker = new maps.Marker({
                 position: { lat: hazard.lat, lng: hazard.lng },
@@ -65,7 +69,11 @@ export default function MapView({ routes, apiKey }) {
             });
           }
         });
-        if (!bounds.isEmpty()) map.fitBounds(bounds);
+        if (!bounds.isEmpty()) {
+          // Keep the route clear of the floating sidebar on wide screens.
+          const pad = window.innerWidth > 860 ? { left: 440, right: 48, top: 48, bottom: 48 } : 48;
+          map.fitBounds(bounds, pad);
+        }
       })
       .catch(() => {});
 
