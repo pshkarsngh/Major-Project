@@ -18,6 +18,10 @@
 - Q: What end-to-end response-time target must a route recommendation meet under normal conditions? → A: p95 under ~45 seconds for trips up to ~20 km with up to 3 alternatives.
 - Q: What makes road imagery "stale," and what should the system do with stale imagery? → A: Imagery older than a configurable cutoff (default 180 days) is stale and is excluded from hazard scoring, with the reduced coverage reported.
 
+### Session 2026-10-11
+
+- Q: When the routing service returns only a single route (no alternatives), what should the system return and how should it justify that route? → A: Return the single route as the recommendation with its Safety Score, and generate the explanation from that route's own safety and time; the alternative-comparison requirement applies only when at least two routes exist.
+
 ## User Scenarios & Testing *(mandatory)*
 
 ### User Story 1 - Safety-Aware Route Recommendation (Priority: P1)
@@ -107,7 +111,7 @@ route, its hazards with approximate locations, and the alternative routes with s
 
 ### Edge Cases
 
-- What happens when the routing service returns only a single route (no alternatives)?
+- When the routing service returns only a single route (no alternatives), the system returns it as the recommendation with its Safety Score and explains it from that route's own safety and time (no alternative comparison is required).
 - What happens when no road imagery is available for some or all segments of a route?
 - What happens when the preference text cannot be interpreted or the interpretation output is malformed?
 - What happens when the destination is unreachable or an origin/destination cannot be resolved?
@@ -133,7 +137,7 @@ route, its hazards with approximate locations, and the alternative routes with s
 - **FR-011**: System MUST interpret a natural-language preference into a safety-versus-time weighting and a set of hazard classes to avoid.
 - **FR-012**: System MUST rank candidate routes by combining the Safety Score and travel time according to the interpreted preference.
 - **FR-013**: System MUST recommend the highest-ranked route.
-- **FR-014**: System MUST produce a plain-language explanation of the recommendation that references the recommended route's safety and time relative to at least one alternative.
+- **FR-014**: System MUST produce a plain-language explanation of the recommendation that references the recommended route's safety and time, and — only when at least one alternative route exists — compares them against at least one alternative; when only a single route is available, the explanation uses that route's own safety and time.
 - **FR-015**: System MUST fall back to a balanced default preference (equal safety/time weight, no avoided classes) when a preference is absent or cannot be interpreted.
 - **FR-016**: System MUST present the recommended route and alternatives with their Safety Scores, travel times, and detected hazards with approximate locations.
 - **FR-017**: System MUST persist hazard detection results and query logs to support reuse, caching, and later analysis.
@@ -162,7 +166,7 @@ route, its hazards with approximate locations, and the alternative routes with s
 - **SC-003**: The system recognizes at least five distinct road hazard classes.
 - **SC-004**: In the absence of a preference, the system applies a balanced default and still returns a recommendation 100% of the time.
 - **SC-005**: For requests where preferences are given, the resulting ranking shifts in the stated direction (toward safety or toward time) in at least 80% of test cases.
-- **SC-006**: Every recommendation is accompanied by a plain-language explanation that cites the recommended route's time and safety relative to at least one alternative.
+- **SC-006**: Every recommendation is accompanied by a plain-language explanation that cites the recommended route's time and safety; when at least one alternative exists, the explanation also references at least one alternative.
 - **SC-007**: When a hazard-bearing route and a hazard-free route of comparable length are both available, the system recommends the hazard-free route in at least 80% of test cases.
 - **SC-008**: Uninterpretable preferences or missing imagery do not cause request failure; the system degrades gracefully and still returns a result.
 - **SC-009**: Every route response reports imagery coverage; routes with no assessed segments are marked as unassessed and are not recommended over assessed routes.

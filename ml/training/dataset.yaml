@@ -1,9 +1,9 @@
 # YOLOv8 dataset config for SafeRoute AI.
 # Built by prepare_rdd2022.py from the RDD2022 India subset; `path` is rewritten
 # to the absolute dataset root when prepare runs.
-path: "../ml/datasets/saferoute"
+path: "D:/Major-Project(Safe route)/ml/datasets/saferoute"
 train: images/train
-val: images/val
+val: images/test
 test: images/test
 
 names:

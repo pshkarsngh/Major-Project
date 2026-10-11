@@ -30,3 +30,9 @@ Thumbs.db
 
 # OpenCode agent config (local only)
 .opencode/
+
+# Training artifacts & pretrained weights
+ml/training/runs/
+ml/training/train.log
+weights/
+yolov8n.pt
