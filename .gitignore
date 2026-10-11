@@ -11,6 +11,8 @@ build/
 
 # Secrets & data
 .env
+# Large dataset archive (keep only the extracted data/ folder)
+data/raw/data.zip
 *.db
 *.sqlite3
 ml/weights/*.pt
